@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="ru">
+  <head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Задание 4</title>
+    <style>
+      .result {
+        display: flex;
+        flex-wrap: wrap;
+        width: 500px;
+      }
+      .card {
+        width: 200px;
+        margin-top: 20px;
+      }
+      .card-image {
+        display: block;
+        width: 200px;
+        height: 150px;
+      }
+      .btn {
+        background-color: lightblue;
+        width: 100px;
+        height:22px;
+        color: black;
+        border: none;
+        text-transform: uppercase;
+      }
+      .btn:hover{
+         background-color: #3E5F8A;
+         color: white;
+       }
+      </style>
+  </head>
+  <body>
+    <p>Введите 2 числа в диапазоне от 100 до 300:</p>
+    <input id="width">
+    <input id="height">
+    <button type="submit" class="btn" id="send_button">Send</button>
+    <div class="result"></div>
+    <script>
+      const value1 = document.querySelector('input').value;
+      const value2 = document.querySelector('input').value;
+      const resultNode = document.querySelector('.result');
+      const btn = document.querySelector('.btn');
+
+btn.addEventListener('click', () => {
+  const value1 = document.getElementById('width').value;
+  const value2 = document.getElementById('height').value;
+  if (value1 >= 100 && value1 <=300 && value2 >= 100 && value2 <=300){
+    const destination = `https://picsum.photos/${value1}/${value2}`
+    fetch(destination)
+      .then((response) => {
+      const image = `
+      <div class="card">
+        <img
+          src="${destination}"
+        />
+        </div>
+    `;
+      resultNode.innerHTML = image;
+    })
+    .catch(() => { 
+      console.log('error')
+  });
+
+  }
+  else {
+    resultNode.innerHTML = "Одно из чисел вне диапазона от 100 до 300"
+  }
+});
+
+    </script>
+  </body>
+</html>

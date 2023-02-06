@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="ru">
+  <head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Задание 3</title>
+    <style>
+      .result {
+        display: flex;
+        flex-wrap: wrap;
+        width: 500px;
+      }
+      .card {
+        width: 200px;
+        margin: 20px;
+      }
+      .card-image {
+        display: block;
+        width: 200px;
+        height: 150px;
+      }
+      .btn {
+        background-color: lightblue;
+        width: 100px;
+        height:22px;
+        color: black;
+        border: none;
+        text-transform: uppercase;
+      }
+      .btn:hover{
+         background-color: #3E5F8A;
+         color: white;
+       }
+      </style>
+  </head>
+  <body>
+    <p>Введите число:</p>
+    <input id="number">
+    <button type="submit" class="btn" id="send_button">Send</button>
+    <div class="result"></div>
+    <script>
+      const value = document.querySelector('input').value;
+const resultNode = document.querySelector('.result');
+const btn = document.querySelector('.btn');
+
+function useRequest(url, callback) {
+  var xhr = new XMLHttpRequest();
+  xhr.open('GET', url, true);
+  
+  xhr.onload = function() {
+    if (xhr.status != 200) {
+      console.log('Статус ответа: ', xhr.status);
+    } else {
+      const result = JSON.parse(xhr.response);
+      if (callback) {
+        callback(result);
+      }
+    }
+  };
+  
+  xhr.onerror = function() {
+    console.log('Ошибка! Статус ответа: ', xhr.status);
+  };
+  
+  xhr.send();
+};
+
+function displayResult(apiData) {
+  let cards = '';
+  // console.log('start cards', cards);
+  
+  apiData.forEach(item => {
+    const cardBlock = `
+      <div class="card">
+        <img
+          src="${item.download_url}"
+          class="card-image"
+        />
+        <p>${item.author}</p>
+      </div>
+    `;
+    cards = cards + cardBlock;
+  });
+  
+  // console.log('end cards', cards);
+    
+  resultNode.innerHTML = cards;
+}
+
+btn.addEventListener('click', () => {
+  const value1 = document.getElementById('number').value;
+  if (value1 > 0 && value1 <=10){
+    const destination = `https://picsum.photos/v2/list?limit=${value1}`
+    console.log(destination)
+    useRequest(destination, displayResult);
+  }
+  else {
+    resultNode.innerHTML = "Число вне диапазона от 1 до 10"
+  }
+});
+
+    </script>
+  </body>
+</html>

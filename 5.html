@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html lang="ru">
+  <head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Задание 5</title>
+    <style>
+      .result {
+        display: flex;
+        flex-wrap: wrap;
+        width: 500px;
+      }
+      .card {
+        width: 200px;
+        margin: 20px;
+      }
+      .card-image {
+        display: block;
+        width: 200px;
+        height: 150px;
+      }
+      .send_btn, .clear_btn {
+        background-color: lightblue;
+        width: 100px;
+        height:22px;
+        color: black;
+        border: none;
+        text-transform: uppercase;
+      }
+      .send_btn:hover, .clear_btn:hover {
+         background-color: #3E5F8A;
+         color: white;
+       }
+      </style>
+  </head>
+  <body>
+    <input placeholder="Введите номер страницы" title="Номер страницы" id="width">
+    <input placeholder="Введите лимит" title="Лимит"id="height">
+    <button title="Запрос" type="submit" class="send_btn" id="send_button">Отправить</button>
+    <button title="Очистить" type="submit" class="clear_btn" id="clear_button">Очистить</button>
+    <div class="result"></div>
+    <script>
+const value1 = document.querySelector('input').value;
+const value2 = document.querySelector('input').value;
+const resultNode = document.querySelector('.result');
+const send_btn = document.querySelector('.send_btn');
+const clear_btn = document.querySelector('.clear_btn');
+
+function useRequest(url, callback) {
+  var xhr = new XMLHttpRequest();
+  
+  xhr.open('GET', url, true);
+  
+  xhr.onload = function() {
+    if (xhr.status != 200) {
+      console.log('Статус ответа: ', xhr.status);
+    } else {
+      const result = JSON.parse(xhr.response);
+      if (callback) {
+        callback(result);
+      }
+    }
+  };
+  
+  xhr.onerror = function() {
+    console.log('Ошибка! Статус ответа: ', xhr.status);
+  };
+  
+  xhr.send();
+};
+
+function displayResult(apiData) {
+  let cards = '';
+  
+  apiData.forEach(item => {
+    const cardBlock = `
+      <div class="card">
+        <img
+          src="${item.download_url}"
+          class="card-image"
+        />
+        <p>${item.author}</p>
+      </div>
+    `;
+    cards = cards + cardBlock;
+  });
+
+  resultNode.innerHTML = cards;
+}
+
+send_btn.addEventListener('click', () => {
+  const value1 = document.getElementById('width').value;
+  const value2 = document.getElementById('height').value;
+  if (value1 >= 1 && value1 <= 10 && value2 >= 1 && value2 <= 10){
+    const destination = `https://picsum.photos/v2/list?page=${value1}&limit=${value2}`
+    useRequest(destination, displayResult);
+    localStorage.setItem('destination', destination);
+    return;
+  }
+  else if ((value1 <= 0 || value1 >= 11) && (value2 >= 1 && value2 <= 10)){
+    resultNode.innerHTML = "Номер страницы вне диапазона от 1 до 10";
+    return;
+  }
+  else if ((value2 <= 0 || value2 >= 11) && (value1 >= 1 && value1 <= 10)){
+    resultNode.innerHTML = "Лимит вне диапазона от 1 до 10";
+    return;
+  }
+  else {
+resultNode.innerHTML = "Номер страницы и лимит вне диапазона от 1 до 10";
+    return;
+  }
+});
+      
+clear_btn.addEventListener('click', () => {
+  localStorage.removeItem('destination');
+  resultNode.innerHTML ="";
+});   
+    const localValue = localStorage.getItem('destination');
+      if (localValue !== null){
+        useRequest(localValue, displayResult);
+      }
+    </script>
+  </body>
+</html>
